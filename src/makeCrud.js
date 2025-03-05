@@ -80,5 +80,7 @@ export default router;
   fs.outputFileSync(routePath, routeContent);
   console.log(`✅ Routes générées : ${routePath}`);
 
-  console.log(`🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !`);
+  console.log(
+    `🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !, N'oubliez pas de migrer la modification "npx prisma migrate dev --name ${entityCapitalized}-update"`
+  );
 }
