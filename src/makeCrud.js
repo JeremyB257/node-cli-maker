@@ -11,21 +11,26 @@ export function makeCrud(entity) {
 
   // 1️⃣ Modifier le fichier schema.prisma
   const schemaPath = path.join(projectRoot, "prisma/schema.prisma");
-  const prismaModel = `
-model ${entityCapitalized} {
-  id        Int     @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-}
-`;
-
   if (!fs.existsSync(schemaPath)) {
     console.error("❌ Erreur : schema.prisma introuvable !");
     process.exit(1);
   }
 
-  fs.appendFileSync(schemaPath, prismaModel);
-  console.log(`✅ Modèle Prisma ajouté à schema.prisma`);
+  const schemaContent = fs.readFileSync(schemaPath, "utf-8");
+  if (schemaContent.includes(`model ${entityCapitalized} {`)) {
+    console.log(`⚠️ Le modèle ${entityCapitalized} existe déjà dans schema.prisma, aucune modification effectuée`);
+  } else {
+    const prismaModel = `
+      model ${entityCapitalized} {
+        id        Int     @id @default(autoincrement())
+        name      String
+        createdAt DateTime @default(now())
+      }
+    `;
+    
+    fs.appendFileSync(schemaPath, prismaModel);
+    console.log(`✅ Modèle Prisma ajouté à schema.prisma`);
+  }
 
   // 3️⃣ Générer le contrôleur
   const controllerPath = path.join(projectRoot, `src/controllers/${entityCapitalized}.Controller.js`);
