@@ -37,7 +37,7 @@ export function makeCrud(entity) {
     execSync(`npx prisma migrate dev --name add_${entityLower}_table`);
     console.log(`✅ Migration Prisma appliquée`);
   } catch(err) {
-    console.error("❌ Erreur lors de la migration !");
+    console.error("❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification "npx prisma migrate dev --name ${entityCapitalized}-update"");
   }
 
   // 3️⃣ Générer le contrôleur
@@ -103,6 +103,6 @@ export default router;
   console.log(`✅ Routes générées : ${routePath}`);
 }
   console.log(
-    `🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !, N'oubliez pas de migrer la modification "npx prisma migrate dev --name ${entityCapitalized}-update"`
+    `🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !`
   );
 }
