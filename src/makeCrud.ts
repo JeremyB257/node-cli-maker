@@ -3,11 +3,11 @@ import path from "path";
 import {execSync} from "child_process";
 
 interface CrudOptions {
-  withTimestamps?: boolean
-  additionnalFiels?: Record<string, string>
+  withTimestamps?: boolean;
+  additionnalFiels?: Record<string, string>;
 }
 
-export function makeCrud(entity:string, options: CrudOptions = {}) {
+export function makeCrud(entity: string, options: CrudOptions = {}) {
   const entityCapitalized = entity.charAt(0).toUpperCase() + entity.slice(1);
   const entityLower = entity.toLowerCase();
 
@@ -26,26 +26,22 @@ export function makeCrud(entity:string, options: CrudOptions = {}) {
   if (schemaContent.includes(`model ${entityCapitalized} {`)) {
     console.log(`⚠️ Le modèle ${entityCapitalized} existe déjà dans schema.prisma, aucune modification effectuée.`);
   } else {
-    
-    let PrismaModelField = [
-      "id        Int     @id @default(autoincrement())",
-      "name      String"
-    ]
-    if(options.additionnalFiels) {
+    let PrismaModelField = ["id        Int     @id @default(autoincrement())", "name      String"];
+    if (options.additionnalFiels) {
       for (const [fieldName, fieldType] of Object.entries(options.additionnalFiels)) {
-        PrismaModelField.push(`${fieldName} ${fieldType}`)
+        PrismaModelField.push(`${fieldName} ${fieldType}`);
       }
     }
-    if(options.withTimestamps) {
-      PrismaModelField.push(`createdAt DateTime @default(now())`)
-      PrismaModelField.push(`updatedAt DateTime @updatedAt`)
+    if (options.withTimestamps) {
+      PrismaModelField.push(`createdAt DateTime @default(now())`);
+      PrismaModelField.push(`updatedAt DateTime @updatedAt`);
     }
     const prismaModel = `
       model ${entityCapitalized} {
        ${PrismaModelField.join("\n  ")}
       }
     `;
-    
+
     fs.appendFileSync(schemaPath, prismaModel);
     console.log(`✅ Modèle Prisma ajouté à schema.prisma`);
   }
@@ -54,8 +50,10 @@ export function makeCrud(entity:string, options: CrudOptions = {}) {
   try {
     execSync(`npx prisma migrate dev --name add_${entityLower}_table`);
     console.log(`✅ Migration Prisma appliquée`);
-  } catch(err) {
-    console.error("❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification 'npx prisma migrate dev --name ${entityCapitalized}-update'");
+  } catch (err) {
+    console.error(
+      "❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification 'npx prisma migrate dev --name ${entityCapitalized}-update'"
+    );
   }
 
   // 3️⃣ Générer le contrôleur
@@ -63,9 +61,7 @@ export function makeCrud(entity:string, options: CrudOptions = {}) {
   if (fs.existsSync(controllerPath)) {
     console.log(`⚠️ Le contrôleur ${controllerPath} existe déjà, aucune modification effectuée.`);
   } else {
-
-  
-  const controllerContent = `import { PrismaClient } from "@prisma/client";
+    const controllerContent = `import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 /**
@@ -124,16 +120,15 @@ export const remove = async (req, res) => {
 };
 `;
 
-  fs.outputFileSync(controllerPath, controllerContent);
-  console.log(`✅ Contrôleur généré : ${controllerPath}`);
-}
+    fs.outputFileSync(controllerPath, controllerContent);
+    console.log(`✅ Contrôleur généré : ${controllerPath}`);
+  }
   // 4️⃣ Générer les routes
   const routePath = path.join(projectRoot, `src/routes/${entityLower}.routes.js`);
   if (fs.existsSync(routePath)) {
     console.log(`⚠️ Le fichier de route ${routePath} existe déjà, aucune modification effectuée.`);
   } else {
-    
-  const routeContent = `import {Router} from "express";
+    const routeContent = `import {Router} from "express";
 const router = Router();
 import { getAll, getOne, create, update, remove } from "../controllers/${entityCapitalized}.Controller.js";
 
@@ -146,10 +141,8 @@ router.delete("/:id", remove);
 export default router;
 `;
 
-  fs.outputFileSync(routePath, routeContent);
-  console.log(`✅ Routes générées : ${routePath}`);
-}
-  console.log(
-    `🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !`
-  );
+    fs.outputFileSync(routePath, routeContent);
+    console.log(`✅ Routes générées : ${routePath}`);
+  }
+  console.log(`🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !`);
 }
