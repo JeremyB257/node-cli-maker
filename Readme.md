@@ -1,4 +1,4 @@
-# Prisma CRUD Generator
+# NodeJs CRUD Generator
 
 Un générateur de CRUD rapide et flexible pour les projets Node.js utilisant Prisma et Express.
 
@@ -16,8 +16,8 @@ Un générateur de CRUD rapide et flexible pour les projets Node.js utilisant Pr
 
 ```bash
 # Cloner le dépôt
-git clone https://github.com/votre-username/prisma-crud-generator.git
-cd prisma-crud-generator
+git clone https://github.com/JeremyB257/node-cli-maker.git
+cd node-cli-maker
 
 # Installer les dépendances
 npm install
@@ -28,28 +28,17 @@ npm run build
 # Créer un lien symbolique pour utiliser l'outil globalement
 npm link
 ```
-
-## 📦 Dépendances
-
-- Node.js (>= 14.x)
-- TypeScript
-- Prisma
-- Express
-- fs-extra
-- commander
-- chalk
-
 ## 🛠️ Utilisation
 
 ### Générer un CRUD complet
 
 ```bash
-prisma-crud make:crud <entity>
+node-maker make:crud <entity>
 ```
 
 Exemple :
 ```bash
-prisma-crud make:crud user
+node-maker make:crud user
 ```
 
 Cette commande va :
@@ -57,7 +46,6 @@ Cette commande va :
 2. Exécuter une migration Prisma
 3. Générer un contrôleur CRUD
 4. Créer un fichier de routes Express
-5. Mettre à jour le fichier index.ts principal (si disponible)
 
 ### Options
 
@@ -68,19 +56,7 @@ Cette commande va :
 
 Exemple avec options :
 ```bash
-prisma-crud make:crud product --fields "price:Float,description:String,inStock:Boolean" --no-timestamps
-```
-
-### Générer uniquement un contrôleur
-
-```bash
-prisma-crud make:controller <entity>
-```
-
-### Générer uniquement des routes
-
-```bash
-prisma-crud make:routes <entity>
+node-maker make:crud product --fields "price:Float,description:String,inStock:Boolean" --no-timestamps
 ```
 
 ## 🌟 Exemples
@@ -88,7 +64,7 @@ prisma-crud make:routes <entity>
 ### Générer un modèle avec des champs personnalisés
 
 ```bash
-prisma-crud make:crud post --fields "title:String,content:String,published:Boolean"
+node-maker make:crud post --fields "title:String,content:String,published:Boolean"
 ```
 
 Cela générera un modèle Prisma :
@@ -133,30 +109,6 @@ Pour une entité `User`, les routes suivantes sont générées :
 | PUT | `/users/:id` | Mettre à jour un utilisateur existant |
 | DELETE | `/users/:id` | Supprimer un utilisateur |
 
-## 🔧 Personnalisation
-
-### Configuration TypeScript
-
-Le projet utilise le fichier `tsconfig.json` suivant :
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "outDir": "dist",
-    "rootDir": "./",
-    "declaration": true
-  },
-  "include": ["src/**/*", "cli.ts"],
-  "exclude": ["node_modules", "dist"]
-}
-```
 
 ## 💡 Contribuer
 
@@ -170,10 +122,4 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus d'informations.
-
-## 📚 Ressources additionnelles
-
-- [Documentation Prisma](https://www.prisma.io/docs/)
-- [Documentation Express](https://expressjs.com/fr/)
-- [TypeScript](https://www.typescriptlang.org/docs/)
+Ce projet est sous licence MIT.
