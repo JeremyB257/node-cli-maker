@@ -36,11 +36,9 @@ export function makeCrud(entity: string, options: CrudOptions = {}) {
       PrismaModelField.push(`createdAt DateTime @default(now())`);
       PrismaModelField.push(`updatedAt DateTime @updatedAt`);
     }
-    const prismaModel = `
-      model ${entityCapitalized} {
-       ${PrismaModelField.join("\n  ")}
-      }
-    `;
+    const prismaModel = `model ${entityCapitalized} {
+        ${PrismaModelField.join("\n  ")}
+      }`;
 
     fs.appendFileSync(schemaPath, prismaModel);
     console.log(`✅ Modèle Prisma ajouté à schema.prisma`);
@@ -52,7 +50,7 @@ export function makeCrud(entity: string, options: CrudOptions = {}) {
     console.log(`✅ Migration Prisma appliquée`);
   } catch (err) {
     console.error(
-      "❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification 'npx prisma migrate dev --name ${entityCapitalized}-update'"
+      `❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification 'npx prisma migrate dev --name add_${entityLower}_table'`
     );
   }
 
@@ -61,7 +59,7 @@ export function makeCrud(entity: string, options: CrudOptions = {}) {
   if (fs.existsSync(controllerPath)) {
     console.log(`⚠️ Le contrôleur ${controllerPath} existe déjà, aucune modification effectuée.`);
   } else {
-    const controllerContent = `import { PrismaClient } from "@prisma/client";
+    const controllerContent = `import {PrismaClient} from "@prisma/client";
 const prisma = new PrismaClient();
 
 /**
@@ -81,8 +79,8 @@ export const getAll = async (req, res) => {
  */
 export const getOne = async (req, res) => {
   try {
-    const ${entityLower} = await prisma.${entityLower}.findUnique({ where: { id: parseInt(req.params.id) } });
-    if (!${entityLower}) return res.status(404).json({ error: "${entityCapitalized} non trouvé" });
+    const ${entityLower} = await prisma.${entityLower}.findUnique({where: {id: parseInt(req.params.id)}});
+    if (!${entityLower}) return res.status(404).json({error: "${entityCapitalized} non trouvé"});
     res.status(200).json(${entityLower});
   } catch (err) {
     res.status(500).json({error: "Erreur lors de la récuperation de ${entityLower}"});
@@ -94,27 +92,27 @@ export const getOne = async (req, res) => {
  */
 export const create = async (req, res) => {
   try {
-    const new${entityCapitalized} = await prisma.${entityLower}.create({ data: req.body });
+    const new${entityCapitalized} = await prisma.${entityLower}.create({data: req.body});
     res.status(201).json(new${entityCapitalized});
-   } catch (err) {
+  } catch (err) {
     res.status(500).json({error: "Erreur lors de la creation d'un ${entityLower}"});
   }
 };
 
 export const update = async (req, res) => {
   try {
-    const updated${entityCapitalized} = await prisma.${entityLower}.update({ where: { id: parseInt(req.params.id) }, data: req.body });
+    const updated${entityCapitalized} = await prisma.${entityLower}.update({where: {id: parseInt(req.params.id)}, data: req.body});
     res.status(200).json(updated${entityCapitalized});
-   } catch (err) {
+  } catch (err) {
     res.status(500).json({error: "Erreur lors de la modification d'un ${entityLower}"});
   }
 };
 
 export const remove = async (req, res) => {
   try {
-  await prisma.${entityLower}.delete({ where: { id: parseInt(req.params.id) } });
-  res.status(204).send();
-   } catch (err) {
+    await prisma.${entityLower}.delete({where: {id: parseInt(req.params.id)}});
+    res.status(204).send();
+  } catch (err) {
     res.status(500).json({error: "Erreur lors de la supression d'un ${entityLower}"});
   }
 };
@@ -130,7 +128,7 @@ export const remove = async (req, res) => {
   } else {
     const routeContent = `import {Router} from "express";
 const router = Router();
-import { getAll, getOne, create, update, remove } from "../controllers/${entityCapitalized}.Controller.js";
+import {getAll, getOne, create, update, remove} from "../controllers/${entityCapitalized}.Controller.js";
 
 router.get("/", getAll);
 router.get("/:id", getOne);
