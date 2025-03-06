@@ -32,6 +32,14 @@ export function makeCrud(entity) {
     console.log(`✅ Modèle Prisma ajouté à schema.prisma`);
   }
 
+  // 2️⃣ Exécuter la migration
+  try {
+    execSync(`npx prisma migrate dev --name add_${entityLower}_table`);
+    console.log(`✅ Migration Prisma appliquée`);
+  } catch(err) {
+    console.error("❌ Erreur lors de la migration !");
+  }
+
   // 3️⃣ Générer le contrôleur
   const controllerPath = path.join(projectRoot, `src/controllers/${entityCapitalized}.Controller.js`);
   if (fs.existSync(controllerPath)) {
