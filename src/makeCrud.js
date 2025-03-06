@@ -26,6 +26,7 @@ export function makeCrud(entity) {
         id        Int     @id @default(autoincrement())
         name      String
         createdAt DateTime @default(now())
+        updatedAt DateTime @updatedAt
       }
     `;
     
@@ -51,30 +52,59 @@ export function makeCrud(entity) {
   const controllerContent = `import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+/**
+ * Recupère tous les ${entityLower}
+ */
 export const getAll = async (req, res) => {
-  const ${entityLower}s = await prisma.${entityLower}.findMany();
-  res.json(${entityLower}s);
+  try {
+    const ${entityLower}s = await prisma.${entityLower}.findMany();
+    res.status(200).json(${entityLower}s);
+  } catch (err) {
+    res.status(500).json({error: "Erreur lors de la récuperation des ${entityLower}"});
+  }
 };
 
+/**
+ * Recupère un ${entityLower} par son ID
+ */
 export const getOne = async (req, res) => {
-  const ${entityLower} = await prisma.${entityLower}.findUnique({ where: { id: parseInt(req.params.id) } });
-  if (!${entityLower}) return res.status(404).json({ error: "${entityCapitalized} non trouvé" });
-  res.json(${entityLower});
+  try {
+    const ${entityLower} = await prisma.${entityLower}.findUnique({ where: { id: parseInt(req.params.id) } });
+    if (!${entityLower}) return res.status(404).json({ error: "${entityCapitalized} non trouvé" });
+    res.status(200).json(${entityLower});
+  } catch (err) {
+    res.status(500).json({error: "Erreur lors de la récuperation de ${entityLower}"});
+  }
 };
 
+/**
+ * Crée un nouveau ${entityLower}
+ */
 export const create = async (req, res) => {
-  const new${entityCapitalized} = await prisma.${entityLower}.create({ data: req.body });
-  res.status(201).json(new${entityCapitalized});
+  try {
+    const new${entityCapitalized} = await prisma.${entityLower}.create({ data: req.body });
+    res.status(201).json(new${entityCapitalized});
+   } catch (err) {
+    res.status(500).json({error: "Erreur lors de la creation d'un ${entityLower}"});
+  }
 };
 
 export const update = async (req, res) => {
-  const updated${entityCapitalized} = await prisma.${entityLower}.update({ where: { id: parseInt(req.params.id) }, data: req.body });
-  res.json(updated${entityCapitalized});
+  try {
+    const updated${entityCapitalized} = await prisma.${entityLower}.update({ where: { id: parseInt(req.params.id) }, data: req.body });
+    res.status(200).json(updated${entityCapitalized});
+   } catch (err) {
+    res.status(500).json({error: "Erreur lors de la modification d'un ${entityLower}"});
+  }
 };
 
 export const remove = async (req, res) => {
+  try {
   await prisma.${entityLower}.delete({ where: { id: parseInt(req.params.id) } });
   res.status(204).send();
+   } catch (err) {
+    res.status(500).json({error: "Erreur lors de la supression d'un ${entityLower}"});
+  }
 };
 `;
 
