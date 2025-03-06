@@ -18,7 +18,7 @@ export function makeCrud(entity) {
 
   const schemaContent = fs.readFileSync(schemaPath, "utf-8");
   if (schemaContent.includes(`model ${entityCapitalized} {`)) {
-    console.log(`⚠️ Le modèle ${entityCapitalized} existe déjà dans schema.prisma, aucune modification effectuée`);
+    console.log(`⚠️ Le modèle ${entityCapitalized} existe déjà dans schema.prisma, aucune modification effectuée.`);
   } else {
     const prismaModel = `
       model ${entityCapitalized} {
@@ -34,6 +34,11 @@ export function makeCrud(entity) {
 
   // 3️⃣ Générer le contrôleur
   const controllerPath = path.join(projectRoot, `src/controllers/${entityCapitalized}.Controller.js`);
+  if (fs.existSync(controllerPath)) {
+    console.log(`⚠️ Le contrôleur ${controllerPath} existe déjà, aucune modification effectuée.`);
+  } else {
+
+  
   const controllerContent = `import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -66,9 +71,13 @@ export const remove = async (req, res) => {
 
   fs.outputFileSync(controllerPath, controllerContent);
   console.log(`✅ Contrôleur généré : ${controllerPath}`);
-
+}
   // 4️⃣ Générer les routes
   const routePath = path.join(projectRoot, `src/routes/${entityLower}.routes.js`);
+  if (fs.existSync(routePath)) {
+    console.log(`⚠️ Le fichier de route ${routePath} existe déjà, aucune modification effectuée.`);
+  } else {
+    
   const routeContent = `import {Router} from "express";
 const router = Router();
 import { getAll, getOne, create, update, remove } from "../controllers/${entityCapitalized}.Controller.js";
@@ -84,7 +93,7 @@ export default router;
 
   fs.outputFileSync(routePath, routeContent);
   console.log(`✅ Routes générées : ${routePath}`);
-
+}
   console.log(
     `🎉 CRUD complet pour "${entityCapitalized}" créé avec Prisma !, N'oubliez pas de migrer la modification "npx prisma migrate dev --name ${entityCapitalized}-update"`
   );
