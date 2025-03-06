@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
+import {execSync} from "child_process";
 
 export function makeCrud(entity) {
   const entityCapitalized = entity.charAt(0).toUpperCase() + entity.slice(1);
@@ -42,7 +43,7 @@ export function makeCrud(entity) {
 
   // 3️⃣ Générer le contrôleur
   const controllerPath = path.join(projectRoot, `src/controllers/${entityCapitalized}.Controller.js`);
-  if (fs.existSync(controllerPath)) {
+  if (fs.existsSync(controllerPath)) {
     console.log(`⚠️ Le contrôleur ${controllerPath} existe déjà, aucune modification effectuée.`);
   } else {
 
@@ -82,7 +83,7 @@ export const remove = async (req, res) => {
 }
   // 4️⃣ Générer les routes
   const routePath = path.join(projectRoot, `src/routes/${entityLower}.routes.js`);
-  if (fs.existSync(routePath)) {
+  if (fs.existsSync(routePath)) {
     console.log(`⚠️ Le fichier de route ${routePath} existe déjà, aucune modification effectuée.`);
   } else {
     
