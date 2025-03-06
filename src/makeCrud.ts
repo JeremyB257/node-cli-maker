@@ -2,7 +2,12 @@ import fs from "fs-extra";
 import path from "path";
 import {execSync} from "child_process";
 
-export function makeCrud(entity) {
+interface CrudOptions {
+  withTimestamps?: boolean
+  additionnalFiels?: Record<string, string>
+}
+
+export function makeCrud(entity:string, options: CrudOptions = {}) {
   const entityCapitalized = entity.charAt(0).toUpperCase() + entity.slice(1);
   const entityLower = entity.toLowerCase();
 
@@ -21,12 +26,23 @@ export function makeCrud(entity) {
   if (schemaContent.includes(`model ${entityCapitalized} {`)) {
     console.log(`⚠️ Le modèle ${entityCapitalized} existe déjà dans schema.prisma, aucune modification effectuée.`);
   } else {
+    
+    let PrismaModelField = [
+      "id        Int     @id @default(autoincrement())",
+      "name      String"
+    ]
+    if(options.additionnalFiels) {
+      for (const [fieldName, fieldType] of Object.entries(options.additionnalFiels)) {
+        PrismaModelField.push(`${fieldName} ${fieldType}`)
+      }
+    }
+    if(options.withTimestamps) {
+      PrismaModelField.push(`createdAt DateTime @default(now())`)
+      PrismaModelField.push(`updatedAt DateTime @updatedAt`)
+    }
     const prismaModel = `
       model ${entityCapitalized} {
-        id        Int     @id @default(autoincrement())
-        name      String
-        createdAt DateTime @default(now())
-        updatedAt DateTime @updatedAt
+       ${PrismaModelField.join("\n  ")}
       }
     `;
     
@@ -39,7 +55,7 @@ export function makeCrud(entity) {
     execSync(`npx prisma migrate dev --name add_${entityLower}_table`);
     console.log(`✅ Migration Prisma appliquée`);
   } catch(err) {
-    console.error("❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification "npx prisma migrate dev --name ${entityCapitalized}-update"");
+    console.error("❌ Erreur lors de la migration !, N'oubliez pas de migrer la modification 'npx prisma migrate dev --name ${entityCapitalized}-update'");
   }
 
   // 3️⃣ Générer le contrôleur
