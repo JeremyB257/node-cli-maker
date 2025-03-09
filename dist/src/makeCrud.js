@@ -109,7 +109,7 @@ export const remove = async (req, res) => {
         console.log(`✅ Contrôleur généré : ${controllerPath}`);
     }
     // 4️⃣ Générer les routes
-    const routePath = path.join(projectRoot, `src/routes/${entityLower}.routes.js`);
+    const routePath = path.join(projectRoot, `src/routes/${entityCapitalized}.routes.js`);
     if (fs.existsSync(routePath)) {
         console.log(`⚠️ Le fichier de route ${routePath} existe déjà, aucune modification effectuée.`);
     }
